@@ -2,14 +2,15 @@ import React from "react";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
+import Layout from "../components/layout/Layout";
 import ProTip from "../components/ProTip";
 import Link from "../components/shared/Link";
 import Copyright from "../components/Copyright";
 
-export default function Index() {
+const Index = () => {
 	return (
-		<Container maxWidth="sm">
-			<Box my={4}>
+		<Layout>
+			<Container>
 				<Typography variant="h4" component="h1" gutterBottom>
 					Next.js example
 				</Typography>
@@ -18,7 +19,9 @@ export default function Index() {
 				</Link>
 				<ProTip />
 				<Copyright />
-			</Box>
-		</Container>
+			</Container>
+		</Layout>
 	);
-}
+};
+
+export default Index;
