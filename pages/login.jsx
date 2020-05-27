@@ -6,8 +6,11 @@ import Typography from "@material-ui/core/Typography";
 import { Formik, Form, Field } from "formik";
 import { TextField } from "formik-material-ui";
 import Button from "@material-ui/core/Button";
+import Router from "next/router";
+import { useSnackbar } from "notistack";
 import schema from "../lib/schemas/login";
 import Link from "../components/shared/Link";
+import { useUser } from "../lib/hooks";
 
 const useStyles = makeStyles(() => ({
 	root: {
@@ -22,11 +25,38 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Login = () => {
-	const classes = useStyles();
+	const [user, { mutate }] = useUser();
+	const { enqueueSnackbar } = useSnackbar();
 
-	const handleSubmit = (values) => {
-		console.log(values);
+	React.useEffect(() => {
+		if (user) {
+			Router.replace("/");
+		}
+	}, [user]);
+
+	const handleSubmit = async (values) => {
+		try {
+			const res = await fetch("/api/auth", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(values),
+			});
+
+			if (!res.ok) throw new Error(await res.text());
+
+			const userObj = await res.json();
+
+			enqueueSnackbar("Login successful", { variant: "success" });
+
+			mutate(userObj);
+		} catch (e) {
+			enqueueSnackbar("Incorrect email or password", { variant: "error" });
+		}
 	};
+
+	const classes = useStyles();
 
 	return (
 		<Box display="flex" alignItems="center" className={classes.root}>

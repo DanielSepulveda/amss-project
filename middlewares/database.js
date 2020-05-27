@@ -10,6 +10,7 @@ const dbConnect = async () => {
 	await mongoose.connect(process.env.MONGO_DB_URL, {
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
+		useCreateIndex: true,
 	});
 
 	status.isConnected = mongoose.connections[0].readyState;
