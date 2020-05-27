@@ -10,33 +10,27 @@ const schema = new mongoose.Schema({
 		type: String,
 		required: [true, "Please provide a name"],
 	},
-	lastname: {
+	bday: {
 		type: String,
-		required: [true, "Please provide a lastname"],
+		required: [true, "Please provide a birthday"],
+	},
+	phone: {
+		type: String,
+		unique: true,
+		required: [true, "Please provide a phone"],
 	},
 	email: {
 		type: String,
+		unique: true,
 		required: [true, "Please provide an email"],
 	},
 	password: {
 		type: String,
 		required: [true, "Please provide a password"],
 	},
-	likes: [
-		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "Like",
-		},
-	],
-	comments: [
-		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "Comment",
-		},
-	],
-	createdAt: {
-		type: Date,
-		default: Date.now,
+	type: {
+		type: String,
+		default: "user",
 	},
 });
 

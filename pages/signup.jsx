@@ -1,13 +1,20 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
+import {
+	Container,
+	Box,
+	Typography,
+	Button,
+	Checkbox,
+	FormControlLabel,
+} from "@material-ui/core";
 import { Formik, Form, Field } from "formik";
 import { TextField } from "formik-material-ui";
-import Button from "@material-ui/core/Button";
+import Router from "next/router";
+import { useSnackbar } from "notistack";
 import schema from "../lib/schemas/signup";
 import Link from "../components/shared/Link";
+import { useUser } from "../lib/hooks";
 
 const useStyles = makeStyles(() => ({
 	root: {
@@ -23,9 +30,35 @@ const useStyles = makeStyles(() => ({
 
 const Login = () => {
 	const classes = useStyles();
+	const [user, { mutate }] = useUser();
+	const { enqueueSnackbar } = useSnackbar();
 
-	const handleSubmit = (values) => {
-		console.log(values);
+	React.useEffect(() => {
+		if (user) {
+			Router.replace("/");
+		}
+	}, [user]);
+
+	const handleSubmit = async (values) => {
+		try {
+			const res = await fetch("/api/signup", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(values),
+			});
+
+			if (!res.ok) throw new Error(await res.text());
+
+			const userObj = await res.json();
+
+			enqueueSnackbar("Signup successful", { variant: "success" });
+
+			mutate(userObj);
+		} catch (e) {
+			enqueueSnackbar(e.message, { variant: "error" });
+		}
 	};
 
 	return (
@@ -45,8 +78,10 @@ const Login = () => {
 							name: "",
 							email: "",
 							phone: "",
+							bday: "",
 							password: "",
 							confirmPassword: "",
+							type: "user",
 						}}
 						validationSchema={schema}
 						onSubmit={handleSubmit}
@@ -85,6 +120,15 @@ const Login = () => {
 									<Box mb={2}>
 										<Field
 											component={TextField}
+											name="bday"
+											label="Birthday"
+											variant="outlined"
+											className={classes.fields}
+										/>
+									</Box>
+									<Box mb={2}>
+										<Field
+											component={TextField}
 											name="password"
 											type="password"
 											label="Password"
@@ -92,7 +136,7 @@ const Login = () => {
 											className={classes.fields}
 										/>
 									</Box>
-									<Box mb={4}>
+									<Box mb={2}>
 										<Field
 											component={TextField}
 											name="confirmPassword"
@@ -101,6 +145,29 @@ const Login = () => {
 											variant="outlined"
 											className={classes.fields}
 										/>
+									</Box>
+									<Box mb={4}>
+										<Field name="type">
+											{({ field, form }) => (
+												<FormControlLabel
+													control={
+														<Checkbox
+															onChange={(event) => {
+																if (event.target.checked) {
+																	form.setFieldValue("type", "place");
+																} else {
+																	form.setFieldValue("type", "user");
+																}
+															}}
+															checked={field.value === "place"}
+															name="type"
+															color="primary"
+														/>
+													}
+													label="Usuario Establecimiento"
+												/>
+											)}
+										</Field>
 									</Box>
 									<Button
 										variant="contained"

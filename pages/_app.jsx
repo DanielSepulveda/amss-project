@@ -2,6 +2,7 @@ import React from "react";
 import Head from "next/head";
 import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
+import { SnackbarProvider } from "notistack";
 import theme from "../lib/theme";
 
 const App = ({ Component, pageProps }) => {
@@ -22,8 +23,10 @@ const App = ({ Component, pageProps }) => {
 				/>
 			</Head>
 			<ThemeProvider theme={theme}>
-				<CssBaseline />
-				<Component {...pageProps} />
+				<SnackbarProvider maxSnack={3}>
+					<CssBaseline />
+					<Component {...pageProps} />
+				</SnackbarProvider>
 			</ThemeProvider>
 		</React.Fragment>
 	);

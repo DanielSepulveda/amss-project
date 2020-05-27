@@ -7,6 +7,7 @@ import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import Link from "../shared/Link";
+import { useUser } from "../../lib/hooks";
 
 const useStyles = makeStyles((theme) => ({
 	menuButton: {
@@ -18,7 +19,18 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Header = ({ openDrawer }) => {
+	const [user, { mutate }] = useUser();
+
+	const handleLogout = async () => {
+		await fetch("/api/auth", {
+			method: "DELETE",
+		});
+
+		mutate(null);
+	};
+
 	const classes = useStyles();
+
 	return (
 		<div>
 			<AppBar position="static">
@@ -35,9 +47,15 @@ const Header = ({ openDrawer }) => {
 					<Typography variant="h6" className={classes.title}>
 						AMSS
 					</Typography>
-					<Button color="inherit" component={Link} naked href="/login">
-						Login
-					</Button>
+					{user ? (
+						<Button color="inherit" onClick={handleLogout}>
+							Logout
+						</Button>
+					) : (
+						<Button color="inherit" component={Link} naked href="/login">
+							Login
+						</Button>
+					)}
 				</Toolbar>
 			</AppBar>
 		</div>
