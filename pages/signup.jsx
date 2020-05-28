@@ -35,7 +35,7 @@ const Login = () => {
 
 	React.useEffect(() => {
 		if (user) {
-			Router.replace("/");
+			Router.replace("/preferencias");
 		}
 	}, [user]);
 
