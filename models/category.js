@@ -9,6 +9,7 @@ const schema = new mongoose.Schema({
 	nameCategory: {
 		type: String,
 		required: [true, "Please provide a name"],
+		unique:true,
 	},
 	description: {
 		type: String,

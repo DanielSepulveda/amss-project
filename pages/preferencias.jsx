@@ -7,6 +7,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 import Layout from 'components/layout/Layout';
 import {Button} from '@material-ui/core'
+import { async } from 'q';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -16,6 +17,30 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
   },
 }));
+
+const handleSubmit = async() =>{
+  try{
+
+  }catch(error){
+
+  }
+}
+
+const getPreferencias = async() =>{
+  try{
+    const res = await fetch("api/category",{
+      method: "GET",
+      headers:{
+        "Content Type": "application/json",
+      },
+    })
+    
+  }catch(error){
+    alert("Error: " +error);
+  }
+}
+
+
 
 export default function CheckboxList() {
   const classes = useStyles();
