@@ -7,7 +7,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 import Layout from 'components/layout/Layout';
 import {Button} from '@material-ui/core'
-import { async } from 'q';
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -26,23 +26,16 @@ const handleSubmit = async() =>{
   }
 }
 
-const getPreferencias = async() =>{
-  try{
-    const res = await fetch("api/category",{
-      method: "GET",
-      headers:{
-        "Content Type": "application/json",
-      },
-    })
-    
-  }catch(error){
-    alert("Error: " +error);
-  }
+CheckboxList.getInitialProps = async() =>{
+  const res = await fetch('http://localhost:3000/api/category');
+  const {data} = await res.json();
+
+  return {category: data};
 }
 
 
 
-export default function CheckboxList() {
+export default function CheckboxList({category}) {
   const classes = useStyles();
   const [checked, setChecked] = React.useState([0]);
 
@@ -63,23 +56,23 @@ export default function CheckboxList() {
         <h1 style={{textAlign:"center", fontSize:"2.5em", marginTop:"0"}}>Elige tus Preferencias</h1>
         
         <List style={{width:"100%", overflow:"auto"}}>
-            {[0,1,2,3,4,5,6,7,8,9,10].map((value) => { //cantidad de elementos de la lista
-                const labelId = `checkbox-list-label-${value}`;
+            {category.map((cat) => { 
+                const labelId = `checkbox-list-label-${cat}`;
 
                 return (
-                <ListItem key={value} role={undefined} dense button onClick={handleToggle(value)} 
+                <ListItem key={cat} role={undefined} dense button onClick={handleToggle(cat)} 
                 style={{width:"100%", textAlign:"center", overflow:"auto"}}>
                     <ListItemIcon>
                     <Checkbox
                         style={{marginLeft:"40%"}}
                         edge="start"
-                        checked={checked.indexOf(value) !== -1}
+                        checked={checked.indexOf(cat) !== -1}
                         tabIndex={-1}
                         disableRipple
                         inputProps={{ 'aria-labelledby': labelId }}
                     />
                     </ListItemIcon>
-                    <ListItemText id={labelId} primary={`Tipo de Comida ${value + 1}`} />
+                    <ListItemText id={labelId} primary={`${cat.nameCategory}`} />
                 </ListItem>
                 );
             })}
