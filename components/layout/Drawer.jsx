@@ -10,6 +10,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MailIcon from "@material-ui/icons/Mail";
+import ListItemLink from "../shared/ListItemLink";
 
 const useStyles = makeStyles({
 	list: {
@@ -38,6 +39,12 @@ const Drawer = ({ open, handleClose }) => {
 								<ListItemText primary={text} />
 							</ListItem>
 						))}
+						<ListItemLink href="/login">
+							<ListItemIcon>
+								<MailIcon />
+							</ListItemIcon>
+							<ListItemText primary="TestLink" />
+						</ListItemLink>
 					</List>
 					<Divider />
 					<List>
