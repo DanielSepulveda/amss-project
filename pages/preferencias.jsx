@@ -7,8 +7,12 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 import Layout from 'components/layout/Layout';
 import {Button} from '@material-ui/core'
+import { useUser } from "../lib/hooks";
+import Router from "next/router";
+import { useSnackbar } from "notistack";
+import useSWR from 'swr';
 
-
+var flag = false;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -18,20 +22,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-//verificar que hay un usario conectado
-const user = ()=>{
-  const [user] = useUser();
-
-
+const userCheck = () => {
+	const [user] = useUser();
 	React.useEffect(() => {
-		if (!user) {
+		if (user===null || flag ==true) {
 			Router.replace("/login");
 		}
 	}, [user]);
 }
 
-
-
+//obtener categorias existentes
 CheckboxList.getInitialProps = async() =>{
   const res = await fetch('http://localhost:3000/api/category');
   const {data} = await res.json();
@@ -39,9 +39,13 @@ CheckboxList.getInitialProps = async() =>{
   return {category: data};
 }
 
-//const [user, {mutate}] = useUser();
-
 export default function CheckboxList({category}) {
+    userCheck();
+    const [user, {mutate}] = useUser();
+    const { enqueueSnackbar } = useSnackbar();
+
+    console.log(user);
+    
   const classes = useStyles();
   const [checked, setChecked] = React.useState([0]);
 
@@ -58,26 +62,23 @@ export default function CheckboxList({category}) {
 
   //mandar la forma
   const handleSubmit = async() =>{
+      var info = [...checked];
+      var infoSend ={"likes": info};
+      infoSend = JSON.stringify(infoSend);
+      console.log(infoSend);
     try {
-			const res = await fetch("/api/users/", {
+			const res = await fetch("/api/users/"+user._id, {
 				method: "PUT",
 				headers: {
-					"Content-Type": "application/json",
+					"Content-Type": "application/json"
 				},
-				body: {
-          likes: JSON.stringify(checked)
-        },
-			});
-
-			if (!res.ok) throw new Error(await res.text());
-
-			const userObj = await res.json();
-
-			enqueueSnackbar("Signup successful", { variant: "success" });
-
-			mutate(userObj);
+                body: infoSend,
+            });
+            if (!res.ok) throw new Error(await res.text());
+            enqueueSnackbar("Preferences Registered", { variant: "success" });
+            flag = true;
 		} catch (e) {
-			enqueueSnackbar(e.message, { variant: "error" });
+            enqueueSnackbar(e.message, { variant: "error" });
 		}
   }
 

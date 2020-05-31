@@ -7,31 +7,40 @@ import ProTip from "../components/ProTip";
 import Link from "../components/shared/Link";
 import Copyright from "../components/Copyright";
 import { get } from "https";
+import { useUser } from "../lib/hooks";
+import Router from "next/router";
+import { useSnackbar } from "notistack";
+import useSWR from 'swr';
 
-
-
-const getIds = async(req,res) =>{
-    res = await fetch('http://localhost:3000/api/users/00c7e4fd-9b2e-40b6-9cb0-84a52348ff5c');
-    const data = await res.json();
-    return data;
+const userCheck = () => {
+	const [user] = useUser();
+	React.useEffect(() => {
+		if (user===null) {
+			Router.replace("/login");
+		}
+	}, [user]);
 }
 
 
-
-
-const categories = async() =>{
-    var Ids = await getIds();
-    const res = await fetch('http://localhost:3000/api/cat/'+ Ids[1]);
-    const {data} = await res.json();
-    console.log(data);
-    return {category: data};
-  }
-
-categories();
-
-
 const Home = () => {
-    
+	userCheck();
+	//const [user, {mutate}] = useUser();
+	//const { enqueueSnackbar } = useSnackbar();
+
+
+	const categories = async() =>{
+		const [user, {mutate}] = useUser();
+		console.log(user);
+		if(user){
+			var id = user._id
+			const res = await fetch('http://localhost:3000/api/' + id + '/categories');
+			const {data} = await res.json();
+			console.log(res);
+			return {category: data};
+		}
+	  }
+
+	categories();
 	return (
 		<Layout>
 			<Container>
