@@ -8,11 +8,11 @@ const schema = new mongoose.Schema({
 	},
 	name: {
 		type: String,
-		required: [true, "Please provide a name"],
+		required: [true, "Please provide a name for the establishment"],
 	},
-	bday: {
+	city: {
 		type: String,
-		required: [true, "Please provide a birthday"],
+		required: [true, "Please provide a valid city"],
 	},
 	phone: {
 		type: String,
@@ -30,14 +30,21 @@ const schema = new mongoose.Schema({
 	},
 	type: {
 		type: String,
-		default: "user",
-	},
-	likes:[{
-      type: String,
-      unique: true
-	}]
+		default: "establishment",
+    },
+    description:{
+        type: String
+    },
+    reviews:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'Review'
+    }],
+    categories:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'Category'
+    }]
 });
 
-const model = mongoose.models.User || mongoose.model("User", schema);
+const model = mongoose.models.Establishment || mongoose.model("Establishment", schema);
 
 export default model;
