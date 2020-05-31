@@ -7,6 +7,7 @@ import {
 	Button,
 	Checkbox,
 	FormControlLabel,
+	Grid,
 } from "@material-ui/core";
 import { Formik, Form, Field } from "formik";
 import { TextField } from "formik-material-ui";
@@ -18,13 +19,17 @@ import { useUser } from "../lib/hooks";
 
 const useStyles = makeStyles(() => ({
 	root: {
-		height: "100vh",
+		marginTop: 32,
+		marginBottom: 32,
 	},
 	title: {
 		marginBottom: "32px",
 	},
 	fields: {
 		width: "400px",
+	},
+	fields100: {
+		width: "100%",
 	},
 }));
 
@@ -35,7 +40,7 @@ const Login = () => {
 
 	React.useEffect(() => {
 		if (user) {
-			Router.replace("/preferencias");
+			Router.replace("/");
 		}
 	}, [user]);
 
@@ -54,6 +59,7 @@ const Login = () => {
 			const userObj = await res.json();
 
 			enqueueSnackbar("Signup successful", { variant: "success" });
+			Router.push("/preferencias");
 
 			mutate(userObj);
 		} catch (e) {
@@ -62,8 +68,8 @@ const Login = () => {
 	};
 
 	return (
-		<Box display="flex" alignItems="center" className={classes.root}>
-			<Container maxWidth="sm">
+		<Box display="flex" alignItems="center">
+			<Container maxWidth="sm" className={classes.root}>
 				<Typography
 					variant="h2"
 					gutterBottom
@@ -78,15 +84,18 @@ const Login = () => {
 							name: "",
 							email: "",
 							phone: "",
-							bday: "",
 							password: "",
 							confirmPassword: "",
-							type: "user",
+							type: "person",
+							lat: 0,
+							lng: 0,
+							description: "",
+							address: "",
 						}}
 						validationSchema={schema}
 						onSubmit={handleSubmit}
 					>
-						{({ submitForm, isSubmitting }) => (
+						{({ submitForm, isSubmitting, values }) => (
 							<Form>
 								<Box display="flex" flexDirection="column" alignItems="center">
 									<Box mb={2}>
@@ -120,15 +129,6 @@ const Login = () => {
 									<Box mb={2}>
 										<Field
 											component={TextField}
-											name="bday"
-											label="Birthday"
-											variant="outlined"
-											className={classes.fields}
-										/>
-									</Box>
-									<Box mb={2}>
-										<Field
-											component={TextField}
 											name="password"
 											type="password"
 											label="Password"
@@ -146,7 +146,7 @@ const Login = () => {
 											className={classes.fields}
 										/>
 									</Box>
-									<Box mb={4}>
+									<Box mb={2}>
 										<Field name="type">
 											{({ field, form }) => (
 												<FormControlLabel
@@ -157,6 +157,10 @@ const Login = () => {
 																	form.setFieldValue("type", "place");
 																} else {
 																	form.setFieldValue("type", "user");
+																	form.setFieldError("lat", "");
+																	form.setFieldError("lng", "");
+																	form.setFieldError("description", "");
+																	form.setFieldError("address", "");
 																}
 															}}
 															checked={field.value === "place"}
@@ -164,11 +168,57 @@ const Login = () => {
 															color="primary"
 														/>
 													}
-													label="Usuario Establecimiento"
+													label="Place?"
 												/>
 											)}
 										</Field>
 									</Box>
+									{values.type === "place" && (
+										<Box mb={2}>
+											<Grid spacing={2} container>
+												<Grid item xs={6}>
+													<Field
+														component={TextField}
+														name="lat"
+														type="number"
+														label="Latitude"
+														variant="outlined"
+														className={classes.fields100}
+													/>
+												</Grid>
+												<Grid item xs={6}>
+													<Field
+														component={TextField}
+														name="lng"
+														type="number"
+														label="Longitude"
+														variant="outlined"
+														className={classes.fields100}
+													/>
+												</Grid>
+												<Grid item xs={12}>
+													<Field
+														component={TextField}
+														name="address"
+														type="text"
+														label="Address"
+														variant="outlined"
+														className={classes.fields100}
+													/>
+												</Grid>
+												<Grid item xs={12}>
+													<Field
+														component={TextField}
+														name="description"
+														type="text"
+														label="Description"
+														variant="outlined"
+														className={classes.fields100}
+													/>
+												</Grid>
+											</Grid>
+										</Box>
+									)}
 									<Button
 										variant="contained"
 										color="primary"

@@ -6,6 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
+import NextLink from "next/link";
 import Link from "../shared/Link";
 import { useUser } from "../../lib/hooks";
 
@@ -15,6 +16,10 @@ const useStyles = makeStyles((theme) => ({
 	},
 	title: {
 		flexGrow: 1,
+	},
+	link: {
+		textDecoration: "none",
+		color: "white",
 	},
 }));
 
@@ -44,9 +49,13 @@ const Header = ({ openDrawer }) => {
 					>
 						<MenuIcon />
 					</IconButton>
-					<Typography variant="h6" className={classes.title}>
-						AMSS
-					</Typography>
+					<div className={classes.title}>
+						<NextLink href="/" passHref>
+							<Typography variant="h6" component="a" className={classes.link}>
+								AMSS
+							</Typography>
+						</NextLink>
+					</div>
 					{user ? (
 						<Button color="inherit" onClick={handleLogout}>
 							Logout

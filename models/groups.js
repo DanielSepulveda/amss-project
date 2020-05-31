@@ -10,25 +10,29 @@ const schema = new mongoose.Schema({
 		type: String,
 		required: [true, "Please provide a name"],
 	},
-	date: {
-		type: Date,
-	},
 	description: {
 		type: String,
 	},
-	place: {
-		type: String,
-		ref: "Place",
-	},
-	type: {
-		type: String,
-	},
-	createdBy: {
-		type: String,
-		ref: "User",
-	},
+	members: [
+		{
+			type: String,
+			ref: "Person",
+		},
+	],
+	messages: [
+		{
+			type: String,
+			ref: "Message",
+		},
+	],
+	events: [
+		{
+			type: String,
+			ref: "Event",
+		},
+	],
 });
 
-const model = mongoose.models.Event || mongoose.model("Event", schema);
+const model = mongoose.models.Group || mongoose.model("Group", schema);
 
 export default model;

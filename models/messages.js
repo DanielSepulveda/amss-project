@@ -6,29 +6,20 @@ const schema = new mongoose.Schema({
 		type: String,
 		default: v4,
 	},
-	name: {
+	message: {
 		type: String,
 		required: [true, "Please provide a name"],
 	},
-	date: {
-		type: Date,
-	},
-	description: {
+	person: {
 		type: String,
+		ref: "Person",
 	},
-	place: {
+	group: {
 		type: String,
-		ref: "Place",
-	},
-	type: {
-		type: String,
-	},
-	createdBy: {
-		type: String,
-		ref: "User",
+		ref: "Group",
 	},
 });
 
-const model = mongoose.models.Event || mongoose.model("Event", schema);
+const model = mongoose.models.Message || mongoose.model("Message", schema);
 
 export default model;

@@ -10,10 +10,6 @@ const schema = new mongoose.Schema({
 		type: String,
 		required: [true, "Please provide a name"],
 	},
-	bday: {
-		type: String,
-		required: [true, "Please provide a birthday"],
-	},
 	phone: {
 		type: String,
 		unique: true,
@@ -30,12 +26,22 @@ const schema = new mongoose.Schema({
 	},
 	type: {
 		type: String,
-		default: "user",
+		default: "person",
 	},
-	likes:[{
-      type: String,
-      unique: true
-	}]
+	categories: [
+		{
+			type: String,
+			ref: "Category",
+		},
+	],
+	person: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "Person",
+	},
+	place: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "Place",
+	},
 });
 
 const model = mongoose.models.User || mongoose.model("User", schema);

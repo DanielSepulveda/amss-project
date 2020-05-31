@@ -6,15 +6,10 @@ const schema = new mongoose.Schema({
 		type: String,
 		default: v4,
 	},
-	nameCategory: {
+	name: {
 		type: String,
 		required: [true, "Please provide a name"],
-		unique:true,
 	},
-	description: {
-		type: String,
-		required: [true, "Please provide a description"],
-	}
 });
 
 const model = mongoose.models.Category || mongoose.model("Category", schema);

@@ -6,13 +6,15 @@ const Markers = (props) => {
 	const { data } = props;
 
 	return data.map((place) => {
-		const [longitude, latitude] = place.center;
+		const { lng, lat } = place.location;
 		return (
 			<Marker
 				key={shortid.generate()}
-				longitude={longitude}
-				latitude={latitude}
+				longitude={lng}
+				latitude={lat}
 				place={place}
+				showPlace={props.showPlace}
+				setShowPlace={props.setShowPlace}
 			/>
 		);
 	});

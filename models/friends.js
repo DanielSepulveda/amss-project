@@ -6,24 +6,19 @@ const schema = new mongoose.Schema({
 		type: String,
 		default: v4,
 	},
-	person: {
+	person1: {
 		type: String,
 		ref: "Person",
 	},
-	place: {
+	person2: {
 		type: String,
-		ref: "Place",
+		ref: "Person",
 	},
-	date: {
+	since: {
 		type: Date,
-		required: true,
-	},
-	content: {
-		type: String,
-		required: true,
 	},
 });
 
-const model = mongoose.models.Review || mongoose.model("Review", schema);
+const model = mongoose.models.Friend || mongoose.model("Friend", schema);
 
 export default model;

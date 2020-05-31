@@ -10,25 +10,17 @@ const schema = new mongoose.Schema({
 		type: String,
 		required: [true, "Please provide a name"],
 	},
-	date: {
-		type: Date,
-	},
 	description: {
-		type: String,
-	},
-	place: {
-		type: String,
-		ref: "Place",
-	},
-	type: {
-		type: String,
-	},
-	createdBy: {
-		type: String,
-		ref: "User",
-	},
+    type: String,
+  },
+  startDate: {
+    type: Date,
+  }
+  endDate: {
+    type: Date
+  }
 });
 
-const model = mongoose.models.Event || mongoose.model("Event", schema);
+const model = mongoose.models.Promotion || mongoose.model("Promotion", schema);
 
 export default model;

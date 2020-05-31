@@ -4,10 +4,12 @@ import MarkerIcon from "@material-ui/icons/Room";
 import Typography from "@material-ui/core/Typography";
 
 const MyMarker = (props) => {
-	const [showPopup, setShowPopup] = React.useState(false);
-
 	const handleClick = () => {
-		setShowPopup(true);
+		props.setShowPlace(props.place._id);
+	};
+
+	const handleClose = () => {
+		props.setShowPlace("");
 	};
 
 	return (
@@ -17,16 +19,17 @@ const MyMarker = (props) => {
 					<MarkerIcon />
 				</div>
 			</Marker>
-			{showPopup && (
+			{props.showPlace === props.place._id && (
 				<Popup
 					latitude={props.latitude}
 					longitude={props.longitude}
 					closeButton={true}
 					closeOnClick={false}
-					onClose={() => setShowPopup(false)}
+					onClose={handleClose}
 					anchor="top"
 				>
-					<Typography>{props.place.text}</Typography>
+					<Typography>{props.place.description}</Typography>
+					<Typography>{props.place.address}</Typography>
 				</Popup>
 			)}
 		</>

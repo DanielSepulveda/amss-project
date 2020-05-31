@@ -10,12 +10,10 @@ const geocodeClient = geocodeService({
 		"pk.eyJ1IjoiYTAxMTkzOTExIiwiYSI6ImNrYXExNTA2YzA1Z3gycmxnbzJzbzVrdG4ifQ.tf47f5cViqBN0lrj43Z8Mg",
 });
 
-const Map = () => {
+const Map = (props) => {
 	const [viewport, setViewport] = React.useState({
 		bearing: 0,
 		pitch: 0,
-		latitude: 25.678,
-		longitude: -100.3133,
 		zoom: 14,
 	});
 	const [dataMarkers, setDataMarkers] = React.useState([]);
@@ -24,11 +22,15 @@ const Map = () => {
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
 				console.log(position);
-				setViewport({
-					...viewport,
+				props.setMapCenter({
 					latitude: position.coords.latitude,
 					longitude: position.coords.longitude,
 				});
+				// setViewport({
+				// 	...viewport,
+				// 	latitude: position.coords.latitude,
+				// 	longitude: position.coords.longitude,
+				// });
 			},
 			(error) => {
 				console.log(error);
@@ -37,51 +39,52 @@ const Map = () => {
 		);
 	}, []);
 
-	const debouncedFetch = React.useCallback(
-		debounce((long, lat) => {
-			geocodeClient
-				.forwardGeocode({
-					query: "restaurant, food",
-					proximity: [long, lat],
-					bbox: [long - 0.01, lat - 0.01, long + 0.01, lat + 0.01],
-					types: ["poi"],
-					limit: 7,
-				})
-				.send()
-				.then((response) => {
-					const matches = response.body;
+	// const debouncedFetch = React.useCallback(
+	// 	debounce((long, lat) => {
+	// 		geocodeClient
+	// 			.forwardGeocode({
+	// 				query: "restaurant, food",
+	// 				proximity: [long, lat],
+	// 				bbox: [long - 0.01, lat - 0.01, long + 0.01, lat + 0.01],
+	// 				types: ["poi"],
+	// 				limit: 7,
+	// 			})
+	// 			.send()
+	// 			.then((response) => {
+	// 				const matches = response.body;
 
-					setDataMarkers(matches.features);
-				});
-		}, 750),
-		[]
-	);
+	// 				setDataMarkers(matches.features);
+	// 			});
+	// 	}, 750),
+	// 	[]
+	// );
 
 	const handleViewport = (viewport) => {
 		setViewport(viewport);
-		debouncedFetch(viewport.longitude, viewport.latitude);
+		props.setMapCenter({
+			latitude: viewport.latitude,
+			longitude: viewport.longitude,
+		});
+		// debouncedFetch(viewport.longitude, viewport.latitude);
 	};
+
+	const { places } = props;
 
 	return (
 		<ReactMapGL
 			{...viewport}
+			{...props.mapCenter}
 			width="100%"
 			height="500px"
 			mapStyle="mapbox://styles/a01193911/ckaq4b8di01ja1inpy2zipxh5"
 			onViewportChange={handleViewport}
 			mapboxApiAccessToken={process.env.MAPBOX_TOKEN}
 		>
-			<Markers data={dataMarkers} />
-			{/* <Popup
-				latitude={25.678}
-				longitude={-100.3133}
-				closeButton={true}
-				closeOnClick={false}
-				// onClose={() => this.setState({showPopup: false})}
-				anchor="top"
-			>
-				<div>You are here</div>
-			</Popup> */}
+			<Markers
+				data={places}
+				showPlace={props.showPlace}
+				setShowPlace={props.setShowPlace}
+			/>
 		</ReactMapGL>
 	);
 };
