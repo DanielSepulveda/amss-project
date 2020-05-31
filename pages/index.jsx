@@ -15,7 +15,7 @@ const Index = () => {
 	const [user, { mutate }] = useUser();
 	React.useEffect(() => {
 		if (user) {
-			alert(user);
+			console.log(user);
 		}
 	}, [user]);
 	console.log(user);
