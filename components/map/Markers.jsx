@@ -1,7 +1,6 @@
 import React from "react";
-import { Marker } from "react-map-gl";
-import MarkerIcon from "@material-ui/icons/Room";
 import shortid from "shortid";
+import Marker from "./Marker";
 
 const Markers = (props) => {
 	const { data } = props;
@@ -13,9 +12,8 @@ const Markers = (props) => {
 				key={shortid.generate()}
 				longitude={longitude}
 				latitude={latitude}
-			>
-				<MarkerIcon />
-			</Marker>
+				place={place}
+			/>
 		);
 	});
 };

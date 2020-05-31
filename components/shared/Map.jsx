@@ -1,5 +1,5 @@
 import React from "react";
-import ReactMapGL, { Marker, Source, Layer } from "react-map-gl";
+import ReactMapGL, { Marker, Popup } from "react-map-gl";
 import axios from "axios";
 import geocodeService from "@mapbox/mapbox-sdk/services/geocoding";
 import debounce from "lib/debounce";
@@ -72,6 +72,16 @@ const Map = () => {
 			mapboxApiAccessToken={process.env.MAPBOX_TOKEN}
 		>
 			<Markers data={dataMarkers} />
+			{/* <Popup
+				latitude={25.678}
+				longitude={-100.3133}
+				closeButton={true}
+				closeOnClick={false}
+				// onClose={() => this.setState({showPopup: false})}
+				anchor="top"
+			>
+				<div>You are here</div>
+			</Popup> */}
 		</ReactMapGL>
 	);
 };
