@@ -21,6 +21,10 @@ const App = ({ Component, pageProps }) => {
 					name="viewport"
 					content="minimum-scale=1, initial-scale=1, width=device-width"
 				/>
+				<link
+					href="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css"
+					rel="stylesheet"
+				/>
 			</Head>
 			<ThemeProvider theme={theme}>
 				<SnackbarProvider maxSnack={3}>
