@@ -11,6 +11,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MailIcon from "@material-ui/icons/Mail";
 import {useUser} from "lib/hooks";
+import ListItemLink from "components/shared/ListItemLink";
 
 const useStyles = makeStyles({
 	list: {
@@ -18,27 +19,12 @@ const useStyles = makeStyles({
 	},
 });
 
-const userType = () => {
-	const [user] = useUser();
-
-
-	React.useEffect(() => {
-		if (user) {
-			Router.replace("/");
-		}
-	}, [user]);
-
-	type(user.type);
-	console.log(type);
-
-}
-
 const Drawer = ({ open, handleClose }) => {
 	const classes = useStyles();
 
 	const [user, {mutate}] = useUser();
 
-	if(user !== null) {
+	if(user != null) {
 		if(user.type !== "user"){
 			return (
 				<div>
@@ -51,23 +37,17 @@ const Drawer = ({ open, handleClose }) => {
 						>
 							<List>
 								{["Home", "Establihment"].map((text, index) => (
-									<ListItem button key={text}>
-										<ListItemIcon>
-											{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-										</ListItemIcon>
-										<ListItemText primary={text} />
-									</ListItem>
+									<ListItemLink href={`/${text.toLowerCase()}`}>
+										{text}
+									</ListItemLink>
 								))}
 							</List>
 							<Divider />
 							<List>
 								{["Promotions", "Events", "Reviews"].map((text, index) => (
-									<ListItem button key={text}>
-										<ListItemIcon>
-											{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-										</ListItemIcon>
-										<ListItemText primary={text} />
-									</ListItem>
+									<ListItemLink href={`/${text.toLowerCase()}`}>
+										{text}
+									</ListItemLink>
 								))}
 							</List>
 						</div>
@@ -87,23 +67,17 @@ const Drawer = ({ open, handleClose }) => {
 				>
 					<List>
 						{["Home", "Profile", "Favorites"].map((text, index) => (
-							<ListItem button key={text}>
-								<ListItemIcon>
-									{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-								</ListItemIcon>
-								<ListItemText primary={text} />
-							</ListItem>
+							<ListItemLink href={`/${text.toLowerCase()}`}>
+								{text}
+							</ListItemLink>
 						))}
 					</List>
 					<Divider />
 					<List>
 						{["Groups", "Friends", "Events"].map((text, index) => (
-							<ListItem button key={text}>
-								<ListItemIcon>
-									{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-								</ListItemIcon>
-								<ListItemText primary={text} />
-							</ListItem>
+							<ListItemLink href={`/${text.toLowerCase()}`}>
+								{text}
+							</ListItemLink>
 						))}
 					</List>
 				</div>
