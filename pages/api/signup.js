@@ -42,8 +42,6 @@ handler.post(async (req, res) => {
 	const user = await User.create({
 		...values,
 		password: hashedPassword,
-		likes:[],
-		reviews:[]
 	});
 
 	req.logIn(user, (err) => {

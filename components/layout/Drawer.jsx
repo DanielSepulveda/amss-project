@@ -10,6 +10,8 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MailIcon from "@material-ui/icons/Mail";
+import {useUser} from "lib/hooks";
+import ListItemLink from "components/shared/ListItemLink";
 
 const useStyles = makeStyles({
 	list: {
@@ -20,6 +22,40 @@ const useStyles = makeStyles({
 const Drawer = ({ open, handleClose }) => {
 	const classes = useStyles();
 
+	const [user, {mutate}] = useUser();
+
+	if(user != null) {
+		if(user.type !== "user"){
+			return (
+				<div>
+					<MUIDrawer open={open} onClose={handleClose}>
+						<div
+							className={classes.list}
+							role="presentation"
+							onClick={handleClose}
+							onKeyDown={handleClose}
+						>
+							<List>
+								{["Home", "Establihment"].map((text, index) => (
+									<ListItemLink href={`/${text.toLowerCase()}`}>
+										{text}
+									</ListItemLink>
+								))}
+							</List>
+							<Divider />
+							<List>
+								{["Promotions", "Events", "Reviews"].map((text, index) => (
+									<ListItemLink href={`/${text.toLowerCase()}`}>
+										{text}
+									</ListItemLink>
+								))}
+							</List>
+						</div>
+					</MUIDrawer>
+				</div>
+			);
+		}
+	}
 	return (
 		<div>
 			<MUIDrawer open={open} onClose={handleClose}>
@@ -30,30 +66,32 @@ const Drawer = ({ open, handleClose }) => {
 					onKeyDown={handleClose}
 				>
 					<List>
-						{["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-							<ListItem button key={text}>
-								<ListItemIcon>
-									{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-								</ListItemIcon>
-								<ListItemText primary={text} />
-							</ListItem>
+						{["Home", "Profile", "Favorites"].map((text, index) => (
+							<ListItemLink href={`/${text.toLowerCase()}`}>
+								{text}
+							</ListItemLink>
 						))}
+						<ListItemLink href="/login">
+							<ListItemIcon>
+								<MailIcon />
+							</ListItemIcon>
+							<ListItemText primary="TestLink" />
+						</ListItemLink>
 					</List>
 					<Divider />
 					<List>
-						{["All mail", "Trash", "Spam"].map((text, index) => (
-							<ListItem button key={text}>
-								<ListItemIcon>
-									{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-								</ListItemIcon>
-								<ListItemText primary={text} />
-							</ListItem>
+						{["Groups", "Friends", "Events"].map((text, index) => (
+							<ListItemLink href={`/${text.toLowerCase()}`}>
+								{text}
+							</ListItemLink>
 						))}
 					</List>
 				</div>
 			</MUIDrawer>
 		</div>
 	);
+
+	
 };
 
 export default Drawer;

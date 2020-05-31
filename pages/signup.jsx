@@ -32,6 +32,7 @@ const Login = () => {
 	const classes = useStyles();
 	const [user, { mutate }] = useUser();
 	const { enqueueSnackbar } = useSnackbar();
+
 	React.useEffect(() => {
 		if (user) {
 			Router.replace("/preferencias");

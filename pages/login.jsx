@@ -49,7 +49,7 @@ const Login = () => {
 			const userObj = await res.json();
 
 			enqueueSnackbar("Login successful", { variant: "success" });
-			
+
 			mutate(userObj);
 		} catch (e) {
 			enqueueSnackbar("Incorrect email or password", { variant: "error" });
