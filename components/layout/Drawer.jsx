@@ -71,6 +71,12 @@ const Drawer = ({ open, handleClose }) => {
 								{text}
 							</ListItemLink>
 						))}
+						<ListItemLink href="/login">
+							<ListItemIcon>
+								<MailIcon />
+							</ListItemIcon>
+							<ListItemText primary="TestLink" />
+						</ListItemLink>
 					</List>
 					<Divider />
 					<List>
