@@ -8,7 +8,6 @@ import Link from "../components/shared/Link";
 import Copyright from "../components/Copyright";
 import { useUser } from "../lib/hooks";
 import Router from "next/router";
-import Map from "../components/shared/Map";
 
 
 const Index = () => {
@@ -23,10 +22,14 @@ const Index = () => {
 	return (
 		<Layout>
 			<Container>
-				<Typography variant="h1" gutterBottom>
-					Map
+				<Typography variant="h4" component="h1" gutterBottom>
+					Next.js example
 				</Typography>
-				<Map />
+				<Link href="/about" color="secondary">
+					Go to the about page
+				</Link>
+				<ProTip />
+				<Copyright />
 			</Container>
 		</Layout>
 	);
