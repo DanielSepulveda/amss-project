@@ -32,6 +32,10 @@ const schema = new mongoose.Schema({
 		type: String,
 		default: "user",
 	},
+	likes:[{
+      type: String,
+      unique: true
+	}]
 });
 
 const model = mongoose.models.User || mongoose.model("User", schema);
