@@ -8,9 +8,31 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.get(async(req,res) =>{
-    //const user = extractUser(req);
-    const reviews = await Review.find({});
-    res.status(200).json({reviews})
+    try {
+		switch (req.query.action) {
+			case "ALL":
+				{
+					const reviews = await Review.find({});
+                    res.status(200).json({reviews})
+				}
+                break;
+            case "USER":{
+                const user = extractUser(req);
+                if (!user) {
+                    res.status(400).end();
+                }
+                const reviews = await Review.find({person: user._id});
+                res.status(200).json({reviews});
+            }break;
+			default: {
+				res.status(400).end();
+			}
+		}
+	} catch (e) {
+		console.log(e);
+		res.status(500).end();
+	}
+    
 });
 
 

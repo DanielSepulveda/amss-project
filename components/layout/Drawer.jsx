@@ -40,6 +40,10 @@ const personLinks = [
 		href: "/reviews",
 		text: "My reviews",
 	},
+	{
+		href: "/userReviews",
+		text: "Write a Review"
+	},
 ];
 
 const placeLinks = [
