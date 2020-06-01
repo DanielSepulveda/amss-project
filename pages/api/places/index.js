@@ -1,6 +1,7 @@
 import nextConnect from "next-connect";
 import Places from "models/places";
 import User from "models/users";
+import Persons from "models/persons";
 import middleware from "middlewares";
 import extractUser from "lib/api/extractUser";
 import mongoose from "mongoose";
@@ -14,9 +15,29 @@ handler.get(async (req, res) => {
 		switch (req.query.action) {
 			case "PLACES":
 				{
-					const places = await Places.find({});
+					const user = extractUser(req);
 
-					res.status(200).json({ places });
+					if (!user || user.type === "place") {
+						const places = await Places.find({});
+
+						res.status(200).json({ places });
+						return;
+					}
+
+					const person = await Persons.findOne({ user: user._id }).populate(
+						"preferences"
+					);
+					const personPreferences = person.preferences.map((p) => p._id);
+					if (personPreferences.length) {
+						const places = await Places.find({
+							categories: { $in: personPreferences },
+						});
+						res.status(200).json({ places });
+					} else {
+						const places = await Places.find({});
+
+						res.status(200).json({ places });
+					}
 				}
 				break;
 			case "INFO":
