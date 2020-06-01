@@ -28,7 +28,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Index = () => {
-	const { data } = useSWR("/api/places", fetcher);
+	const { data } = useSWR("/api/places?action=PLACES", fetcher);
 	const classes = useStyles();
 	const [showPlace, setShowPlace] = React.useState("");
 	const [mapCenter, setMapCenter] = React.useState({
