@@ -1,4 +1,14 @@
 import mongoose from "mongoose";
+import Categories from "models/categories";
+import Events from "models/events";
+import Friends from "models/friends";
+import Groups from "models/groups";
+import Messages from "models/messages";
+import Persons from "models/persons";
+import Places from "models/places";
+import Promotions from "models/promotion";
+import Reviews from "models/reviews";
+import Users from "models/users";
 
 const status = {};
 

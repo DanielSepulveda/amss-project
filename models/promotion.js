@@ -11,14 +11,14 @@ const schema = new mongoose.Schema({
 		required: [true, "Please provide a name"],
 	},
 	description: {
-    type: String,
-  },
-  startDate: {
-    type: Date,
-  }
-  endDate: {
-    type: Date
-  }
+		type: String,
+	},
+	startDate: {
+		type: Date,
+	},
+	endDate: {
+		type: Date,
+	},
 });
 
 const model = mongoose.models.Promotion || mongoose.model("Promotion", schema);
