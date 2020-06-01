@@ -37,11 +37,11 @@ const personLinks = [
 		text: "My Friends",
 	},
 	{
-		href: "/reviews",
+		href: "/userreviews",
 		text: "My reviews",
 	},
 	{
-		href: "/userReviews",
+		href: "/Reviews",
 		text: "Write a Review"
 	},
 ];
