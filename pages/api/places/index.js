@@ -33,6 +33,12 @@ handler.get(async (req, res) => {
 					res.status(200).json({ place });
 				}
 				break;
+			case "ONEPLACE":{
+				const place = await Places.find({_id: req.body._id});
+
+				res.status(200).json({ place });
+			}
+			break;
 			default: {
 				res.status(400).end();
 			}
