@@ -41,7 +41,7 @@ const personLinks = [
 		text: "My reviews",
 	},
 	{
-		href: "/Reviews",
+		href: "/reviews",
 		text: "Write a Review",
 	},
 ];
