@@ -10,7 +10,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MailIcon from "@material-ui/icons/Mail";
-import {useUser} from "lib/hooks";
+import { useUser } from "lib/hooks";
 import ListItemLink from "components/shared/ListItemLink";
 
 const useStyles = makeStyles({
@@ -19,43 +19,67 @@ const useStyles = makeStyles({
 	},
 });
 
+const personLinks = [
+	{
+		href: "/profile",
+		text: "My Profile",
+	},
+	{
+		href: "/events",
+		text: "My Events",
+	},
+	{
+		href: "/groups",
+		text: "My Groups",
+	},
+	{
+		href: "/friends",
+		text: "My Friends",
+	},
+	{
+		href: "/reviews",
+		text: "My reviews",
+	},
+];
+
+const placeLinks = [
+	{
+		href: "/dashboard",
+		text: "My Dashboard",
+	},
+	{
+		href: "/events",
+		text: "My Events",
+	},
+	{
+		href: "/promotions",
+		text: "My Promotions",
+	},
+];
+
 const Drawer = ({ open, handleClose }) => {
 	const classes = useStyles();
 
-	const [user, {mutate}] = useUser();
+	const [user, { mutate }] = useUser();
 
-	if(user != null) {
-		if(user.type !== "user"){
-			return (
-				<div>
-					<MUIDrawer open={open} onClose={handleClose}>
-						<div
-							className={classes.list}
-							role="presentation"
-							onClick={handleClose}
-							onKeyDown={handleClose}
-						>
-							<List>
-								{["Home", "Establihment"].map((text, index) => (
-									<ListItemLink href={`/${text.toLowerCase()}`}>
-										{text}
-									</ListItemLink>
-								))}
-							</List>
-							<Divider />
-							<List>
-								{["Promotions", "Events", "Reviews"].map((text, index) => (
-									<ListItemLink href={`/${text.toLowerCase()}`}>
-										{text}
-									</ListItemLink>
-								))}
-							</List>
-						</div>
-					</MUIDrawer>
-				</div>
-			);
-		}
-	}
+	if (!user)
+		return (
+			<div>
+				<MUIDrawer open={open} onClose={handleClose}>
+					<div
+						className={classes.list}
+						role="presentation"
+						onClick={handleClose}
+						onKeyDown={handleClose}
+					>
+						<List>
+							<ListItemLink href={`/dashboard`}>Home</ListItemLink>
+						</List>
+					</div>
+				</MUIDrawer>
+			</div>
+		);
+
 	return (
 		<div>
 			<MUIDrawer open={open} onClose={handleClose}>
@@ -66,32 +90,24 @@ const Drawer = ({ open, handleClose }) => {
 					onKeyDown={handleClose}
 				>
 					<List>
-						{["Home", "Profile", "Favorites"].map((text, index) => (
-							<ListItemLink href={`/${text.toLowerCase()}`}>
-								{text}
-							</ListItemLink>
-						))}
-						<ListItemLink href="/login">
-							<ListItemIcon>
-								<MailIcon />
-							</ListItemIcon>
-							<ListItemText primary="TestLink" />
-						</ListItemLink>
-					</List>
-					<Divider />
-					<List>
-						{["Groups", "Friends", "Events"].map((text, index) => (
-							<ListItemLink href={`/${text.toLowerCase()}`}>
-								{text}
-							</ListItemLink>
-						))}
+						<ListItemLink href={`/`}>Home</ListItemLink>
+						{user.type === "person" &&
+							personLinks.map((link) => (
+								<ListItemLink href={`${link.href}`} key={link.href}>
+									{link.text}
+								</ListItemLink>
+							))}
+						{user.type === "place" &&
+							placeLinks.map((link) => (
+								<ListItemLink href={`${link.href}`} key={link.href}>
+									{link.text}
+								</ListItemLink>
+							))}
 					</List>
 				</div>
 			</MUIDrawer>
 		</div>
 	);
-
-	
 };
 
 export default Drawer;
