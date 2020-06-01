@@ -62,24 +62,6 @@ const Drawer = ({ open, handleClose }) => {
 
 	const [user, { mutate }] = useUser();
 
-	if (!user)
-		return (
-			<div>
-				<MUIDrawer open={open} onClose={handleClose}>
-					<div
-						className={classes.list}
-						role="presentation"
-						onClick={handleClose}
-						onKeyDown={handleClose}
-					>
-						<List>
-							<ListItemLink href={`/dashboard`}>Home</ListItemLink>
-						</List>
-					</div>
-				</MUIDrawer>
-			</div>
-		);
-
 	return (
 		<div>
 			<MUIDrawer open={open} onClose={handleClose}>
@@ -91,13 +73,13 @@ const Drawer = ({ open, handleClose }) => {
 				>
 					<List>
 						<ListItemLink href={`/`}>Home</ListItemLink>
-						{user.type === "person" &&
+						{user?.type === "person" &&
 							personLinks.map((link) => (
 								<ListItemLink href={`${link.href}`} key={link.href}>
 									{link.text}
 								</ListItemLink>
 							))}
-						{user.type === "place" &&
+						{user?.type === "place" &&
 							placeLinks.map((link) => (
 								<ListItemLink href={`${link.href}`} key={link.href}>
 									{link.text}
