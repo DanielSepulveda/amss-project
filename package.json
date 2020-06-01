@@ -33,6 +33,7 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-map-gl": "^5.2.5",
+    "react-swipeable-views": "^0.13.9",
     "shortid": "^2.2.15",
     "swr": "^0.2.2",
     "uuid": "^8.1.0",

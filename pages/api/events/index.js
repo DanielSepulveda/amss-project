@@ -3,6 +3,7 @@ import Places from "models/places";
 import Users from "models/users";
 import Persons from "models/persons";
 import Events from "models/events";
+import Friends from "models/friends";
 import middleware from "middlewares";
 import extractUser from "lib/api/extractUser";
 
@@ -30,20 +31,96 @@ handler.get(async (req, res) => {
 								},
 							},
 						});
-						console.log(nUser);
-						// .populate("person")
-						// .populate("person.events")
-						// .populate("person.events.createdBy")
-						// .populate("person.events.place");
-						res.status(200).json({ events: nUser.person.events });
-					} else {
-						const nUser = await Users.findOne({ _id: user._id })
-							.populate("place")
-							.populate("place.events")
-							.populate("place.events.createdBy")
-							.populate("place.events.place");
 
-						res.status(200).json({ events: nUser.place.events });
+						const myEvents = nUser.person.events;
+
+						const publicEvents = await Events.find({
+							createdBy: { $ne: user._id },
+							type: "public",
+						})
+							.populate("createdBy")
+							.populate("place");
+
+						res.status(200).json({ myEvents, publicEvents });
+					} else {
+						const nUser = await Users.findOne({ _id: user._id }).populate({
+							path: "place",
+							populate: {
+								path: "events",
+								populate: {
+									path: "createdBy place",
+								},
+							},
+						});
+
+						res.status(200).json({ myEvents: nUser.place.events });
+					}
+				}
+				break;
+			case "EVENT":
+				{
+					const user = extractUser(req);
+					if (!user) {
+						res.status(400).end();
+					}
+
+					const { id: eventId } = req.query;
+
+					if (user.type === "person") {
+						const event = await Events.findOne({ _id: eventId })
+							.populate("createdBy")
+							.populate("place");
+
+						const attending = await Persons.exists({
+							user: user._id,
+							events: { $in: [event._id] },
+						});
+
+						const myEvent = event.createdBy._id === user._id;
+
+						const peopleAttending = await Persons.find({
+							user: { $ne: user._id },
+							events: { $in: [event._id] },
+						}).populate("user");
+
+						const relations = await Friends.find({
+							$or: [{ person1: user._id }, { person2: user._id }],
+						})
+							.populate({ path: "person1", populate: { path: "user" } })
+							.populate({ path: "person2", populate: { path: "user" } });
+
+						const friends = relations.map((r) => {
+							if (r.person1.user._id !== user._id) {
+								return r.person1;
+							} else {
+								return r.person2;
+							}
+						});
+
+						const friendsIds = friends.map((f) => f._id);
+
+						const inviteFriends = await Persons.find({
+							_id: { $in: friendsIds },
+							events: { $nin: [event._id] },
+						}).populate("user");
+
+						res.status(200).json({
+							event,
+							attending,
+							peopleAttending,
+							myEvent,
+							friends: inviteFriends,
+						});
+					} else {
+						const event = await Events.findOne({ _id: eventId })
+							.populate("createdBy")
+							.populate("place");
+
+						const peopleAttending = await Persons.find({
+							events: { $in: [event._id] },
+						}).populate("user");
+
+						res.status(200).json({ event, peopleAttending });
 					}
 				}
 				break;
@@ -60,27 +137,47 @@ handler.get(async (req, res) => {
 handler.post(async (req, res) => {
 	try {
 		switch (req.query.action) {
-			case "CREATE_PERSON_EVENT":
+			case "CREATE_EVENT":
 				{
 					const user = extractUser(req);
 
-					if (!user || user.type === "place") {
+					if (!user) {
 						res.status(400).end();
 					}
 
 					const values = req.body;
 
-					const nEvent = await Events({
-						...values,
-					});
+					if (user.type === "person") {
+						const nEvent = await Events({
+							...values,
+						});
 
-					await nEvent.save();
+						await nEvent.save();
 
-					const person = await Persons.findOne({ user: user._id });
+						const person = await Persons.findOne({ user: user._id });
 
-					person.events.push(nEvent);
+						person.events.push(nEvent);
 
-					await person.save();
+						await person.save();
+					} else {
+						const nUser = await Users.findOne({ _id: user._id }).populate(
+							"place"
+						);
+
+						values.place = nUser.place._id;
+
+						const nEvent = await Events({
+							...values,
+						});
+
+						await nEvent.save();
+
+						const place = await Places.findOne({ user: user._id });
+
+						place.events.push(nEvent);
+
+						await place.save();
+					}
 
 					res.status(200).end();
 				}

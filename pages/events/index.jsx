@@ -16,9 +16,9 @@ import {
 	DialogTitle,
 	MenuItem,
 	InputLabel,
-	Card,
-	CardContent,
-	CardActions,
+	Tabs,
+	Tab,
+	AppBar,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import useSWR from "swr";
@@ -27,10 +27,13 @@ import { TextField, Select } from "formik-material-ui";
 import { DatePicker } from "formik-material-ui-pickers";
 import * as yup from "yup";
 import { useSnackbar } from "notistack";
-import { format } from "date-fns";
-
-import Layout from "../components/layout/Layout";
-import { useUser } from "../lib/hooks";
+import Router from "next/router";
+import SwipeableViews from "react-swipeable-views";
+import MyEvents from "components/events/MyEvents";
+import PublicEvents from "components/events/PublicEvents";
+import TabPanel from "components/shared/TabPanel";
+import Layout from "components/layout/Layout";
+import { useUser } from "lib/hooks";
 
 const fetcher = (url) => fetch(url).then((r) => r.json());
 
@@ -47,8 +50,17 @@ const schema = yup.object().shape({
 	name: yup.string().required("Please add a name"),
 	date: yup.date().required("Please add a date"),
 	description: yup.string().required("Please add a description"),
-	place: yup.string().required("Please add a place"),
 });
+
+function a11yProps(index) {
+	return {
+		id: `full-width-tab-${index}`,
+		"aria-controls": `full-width-tabpanel-${index}`,
+	};
+}
+
+const personTabs = ["Event invitations", "Public events"];
+const placeTabs = [];
 
 const Page = () => {
 	const { data } = useSWR("/api/events?action=EVENTS", fetcher);
@@ -57,6 +69,7 @@ const Page = () => {
 	const [user] = useUser();
 	const { enqueueSnackbar } = useSnackbar();
 	const [openModal, setOpenModal] = React.useState(false);
+	const [tab, setTab] = React.useState(0);
 
 	React.useEffect(() => {
 		if (!user && user !== undefined) {
@@ -76,39 +89,60 @@ const Page = () => {
 		setOpenModal(false);
 	};
 
+	const handleChangeTab = (event, newValue) => {
+		setTab(newValue);
+	};
+
+	const handleChangeIndex = (index) => {
+		setTab(index);
+	};
+
 	const handleSubmit = async (values, formik) => {
 		try {
-			if (user.type === "person") {
-				const nEvent = {
-					...values,
-					type: "public",
-					createdBy: user._id,
-				};
-				console.log(nEvent);
-				const res = await fetch("/api/events?action=CREATE_PERSON_EVENT", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify(nEvent),
-				});
+			const nEvent = {
+				...values,
+				type: "public",
+				createdBy: user._id,
+			};
+			console.log(nEvent);
+			const res = await fetch("/api/events?action=CREATE_EVENT", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(nEvent),
+			});
 
-				if (!res.ok) throw new Error(await res.text());
+			if (!res.ok) throw new Error(await res.text());
 
-				enqueueSnackbar("Event created", { variant: "success" });
-				formik.resetForm();
-				window.location.reload();
-			}
+			enqueueSnackbar("Event created", { variant: "success" });
+			formik.resetForm();
+			window.location.reload();
 		} catch (e) {
 			enqueueSnackbar(e.message, { variant: "error" });
 		}
 	};
 
-	console.log(data);
-	console.log(dataPlaces);
-
 	const allPlaces = dataPlaces?.places || [];
-	const myEvents = data?.events || [];
+	const myEvents = data?.myEvents || [];
+	const publicEvents = data?.publicEvents || [];
+
+	const initialValues = (() => {
+		if (user?.type === "person") {
+			return {
+				name: "",
+				date: new Date(),
+				description: "",
+				place: "",
+			};
+		} else {
+			return {
+				name: "",
+				date: new Date(),
+				description: "",
+			};
+		}
+	})();
 
 	return (
 		<Layout>
@@ -132,34 +166,48 @@ const Page = () => {
 						</Button>
 					</Box>
 				</Box>
-				<Grid container spacing={2}>
-					{myEvents.map((e) => (
-						<Grid item xs={3} key={e._id}>
-							<Card>
-								<CardContent>
-									<Typography
-										variant="h5"
-										gutterBottom
-										className={classes.cardTitle}
-										align="center"
-									>
-										{e.name}
-									</Typography>
-									<Typography gutterBottom color="textSecondary">
-										{e.place.description}
-									</Typography>
-									<Typography gutterBottom>{e.description}</Typography>
-									<Typography>
-										{format(new Date(e.date), "dd/MM/yyyy")}
-									</Typography>
-								</CardContent>
-								<CardActions>
-									<Button size="small">More information</Button>
-								</CardActions>
-							</Card>
-						</Grid>
-					))}
-				</Grid>
+				<Box mb={2}>
+					<AppBar position="static" color="default">
+						<Tabs
+							value={tab}
+							onChange={handleChangeTab}
+							indicatorColor="primary"
+							textColor="primary"
+							variant="fullWidth"
+							aria-label="full width tabs example"
+						>
+							<Tab label="Events" {...a11yProps(0)} />
+							{user?.type === "person" &&
+								personTabs.map((t, i) => (
+									<Tab key={t} label={t} {...a11yProps(i + 1)} />
+								))}
+							{user?.type === "place" &&
+								placeTabs.map((t, i) => (
+									<Tab key={t} label={t} {...a11yProps(i + 1)} />
+								))}
+						</Tabs>
+					</AppBar>
+				</Box>
+				{user?.type === "person" && (
+					<SwipeableViews index={tab} onChangeIndex={handleChangeIndex}>
+						<TabPanel value={tab} index={0}>
+							<MyEvents events={myEvents} user={user} />
+						</TabPanel>
+						<TabPanel value={tab} index={1}>
+							Item Two
+						</TabPanel>
+						<TabPanel value={tab} index={2}>
+							<PublicEvents events={publicEvents} user={user} />
+						</TabPanel>
+					</SwipeableViews>
+				)}
+				{user?.type === "place" && (
+					<SwipeableViews index={tab} onChangeIndex={handleChangeIndex}>
+						<TabPanel value={tab} index={0}>
+							<MyEvents events={myEvents} user={user} />
+						</TabPanel>
+					</SwipeableViews>
+				)}
 			</Container>
 			<Dialog
 				open={openModal}
@@ -167,12 +215,7 @@ const Page = () => {
 				aria-labelledby="form-dialog-title"
 			>
 				<Formik
-					initialValues={{
-						name: "",
-						date: new Date(),
-						description: "",
-						place: "",
-					}}
+					initialValues={initialValues}
 					validationSchema={schema}
 					onSubmit={handleSubmit}
 				>
@@ -215,24 +258,26 @@ const Page = () => {
 											className={classes.fields}
 										/>
 									</Box>
-									<Box>
-										<InputLabel htmlFor="place-select">Place</InputLabel>
-										<Field
-											component={Select}
-											name="place"
-											inputProps={{
-												id: "place-select",
-											}}
-											variant="outlined"
-											className={classes.fields}
-										>
-											{allPlaces.map((p) => (
-												<MenuItem key={p._id} value={p._id}>
-													{p.description}
-												</MenuItem>
-											))}
-										</Field>
-									</Box>
+									{user.type === "person" && (
+										<Box>
+											<InputLabel htmlFor="place-select">Place</InputLabel>
+											<Field
+												component={Select}
+												name="place"
+												inputProps={{
+													id: "place-select",
+												}}
+												variant="outlined"
+												className={classes.fields}
+											>
+												{allPlaces.map((p) => (
+													<MenuItem key={p._id} value={p._id}>
+														{p.description}
+													</MenuItem>
+												))}
+											</Field>
+										</Box>
+									)}
 								</Box>
 							</DialogContent>
 							<DialogActions>
