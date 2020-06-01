@@ -28,12 +28,6 @@ const schema = new mongoose.Schema({
 		type: String,
 		default: "person",
 	},
-	categories: [
-		{
-			type: String,
-			ref: "Category",
-		},
-	],
 	person: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Person",
