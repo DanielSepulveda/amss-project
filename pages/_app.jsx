@@ -4,6 +4,8 @@ import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { SnackbarProvider } from "notistack";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { MuiPickersUtilsProvider } from "@material-ui/pickers";
+import DateFnsUtils from "@date-io/date-fns";
 import theme from "../lib/theme";
 
 const App = ({ Component, pageProps }) => {
@@ -28,10 +30,12 @@ const App = ({ Component, pageProps }) => {
 				/>
 			</Head>
 			<ThemeProvider theme={theme}>
-				<SnackbarProvider maxSnack={3}>
-					<CssBaseline />
-					<Component {...pageProps} />
-				</SnackbarProvider>
+				<MuiPickersUtilsProvider utils={DateFnsUtils}>
+					<SnackbarProvider maxSnack={3}>
+						<CssBaseline />
+						<Component {...pageProps} />
+					</SnackbarProvider>
+				</MuiPickersUtilsProvider>
 			</ThemeProvider>
 		</React.Fragment>
 	);

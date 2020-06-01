@@ -40,6 +40,13 @@ handler.get(async (req, res) => {
 					}
 				}
 				break;
+			case "ALL_PLACES":
+				{
+					const places = await Places.find({});
+
+					res.status(200).json({ places });
+				}
+				break;
 			case "INFO":
 				{
 					const user = extractUser(req);
@@ -65,6 +72,7 @@ handler.get(async (req, res) => {
 			}
 		}
 	} catch (e) {
+		console.log(e);
 		res.status(500).end();
 	}
 });
