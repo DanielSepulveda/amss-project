@@ -22,7 +22,7 @@
     "formik-material-ui": "^2.0.0-beta.1",
     "formik-material-ui-pickers": "^0.0.8",
     "google-map-react": "^1.1.7",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "material-ui-react": "0.0.1",
     "mongoose": "^5.9.16",
     "next": "9.4.1",
